@@ -1,5 +1,14 @@
 <template>
   <div>
+    <v-layout>
+      <v-flex xs6 d-flex>
+        <v-select :items="locations" box label="Location"></v-select>
+      </v-flex>
+      <v-flex xs6 d-flex>
+        <v-select :items="dates" box label="Date"></v-select>
+      </v-flex>
+    </v-layout>
+
     <MglMap
       :accessToken="accessToken"
       :zoom="12"
@@ -31,6 +40,8 @@ export default {
     MglPopup
   },
   data: () => ({
+    locations: ["Büro 1", "Karlsruhe"],
+    dates: ["heute", "morgen", "übermorgen"],
     center: [13, 52],
     coordinates: [13, 52],
     mapStyle: "mapbox://styles/mapbox/light-v9",
