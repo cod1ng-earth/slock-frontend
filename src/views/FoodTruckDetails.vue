@@ -51,7 +51,7 @@ export default {
   },
   async created() {
     const response = await this.axios.get(
-      "http://www.mocky.io/v2/5cdf3dbe3000004600430d50"
+      "https://www.mocky.io/v2/5cdf3dbe3000004600430d50"
     );
     this.truck = response.data;
     this.truck.id = this.id;
