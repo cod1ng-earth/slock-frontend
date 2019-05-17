@@ -9,8 +9,8 @@
 
     <v-content>
       <router-view></router-view>
+      <Menu v-model="drawer"/>
     </v-content>
-    <Menu v-model="drawer"/>
   </v-app>
 </template>
 

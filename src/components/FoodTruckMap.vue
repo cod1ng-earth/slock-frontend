@@ -16,11 +16,7 @@
       :mapStyle.sync="mapStyle"
       style="height:50vh;"
     >
-      <MglMarker :coordinates="coordinates" color="blue">
-        <MglPopup :onlyText="true">
-          <div>Hello, I'm a popup!</div>
-        </MglPopup>
-      </MglMarker>
+      <MglMarker :coordinates="coordinates" color="blue" @click="gotoFoodTruck"></MglMarker>
     </MglMap>
 
     <v-container>
@@ -50,6 +46,11 @@ export default {
   }),
   created() {
     this.mapbox = Mapbox; // We need to set mapbox-gl library here in order to use it in template
+  },
+  methods: {
+    gotoFoodTruck() {
+      this.$router.push({ name: "truck", params: { id: "stefan" } });
+    }
   }
 };
 </script>
