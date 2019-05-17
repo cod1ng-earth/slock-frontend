@@ -1,16 +1,16 @@
 <template>
-  <HelloWorld/>
+  <FoodTruckMap/>
 </template>
 
 <script>
-import HelloWorld from "../components/HelloWorld";
+import FoodTruckMap from "../components/FoodTruckMap";
 
 export default {
   data() {
     return {};
   },
   components: {
-    HelloWorld
+    FoodTruckMap
   }
 };
 </script>
