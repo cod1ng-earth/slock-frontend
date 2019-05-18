@@ -15,7 +15,13 @@
         ></v-select>
       </v-flex>
       <v-flex xs6 d-flex>
-        <v-select :items="dates" @change="dateChanged" box label="Date"></v-select>
+        <v-select :items="dates"
+                  @change="dateChanged"
+                  item-text="label"
+                  item-value="date"
+                  box
+                  label="Date"
+        ></v-select>
       </v-flex>
     </v-layout>
 
@@ -44,7 +50,22 @@ export default {
     sheet: false,
     chosenTruck: null,
     selectedLocation: null,
-    dates: ["heute", "morgen", "übermorgen"],
+    selectedDate: null,
+    dates: [
+      {
+        label: "heute",
+        date: '2019-05-18'
+      },
+      {
+        label:"morgen",
+        date: '2019-05-19'
+      }
+      ,
+      {
+        label:"übermorgen",
+        date: '2019-05-20'
+      }
+    ],
     customerLocations: null,
     bookings: []
   }),
@@ -69,15 +90,25 @@ export default {
     },
     locationSelected(location) {
       this.selectedLocation = location;
-      this.searchTrucks(location.location);
+      this.searchTrucks();
     },
     dateChanged(date) {
-      console.log(date);
+      this.selectedDate = date;
+      this.searchTrucks();
     },
-    async searchTrucks(location) {
-      console.log(location);
+    async searchTrucks() {
+      if (!this.selectedLocation || !this.selectedDate) {
+        return;
+      }
+
       const result = await this.$apollo.query({
-        query: QUERY_BOOKINGS
+        query: QUERY_BOOKINGS,
+        variables: {
+            latitude: parseFloat(this.selectedLocation.location.latitude),
+            longitude: parseFloat(this.selectedLocation.location.longitude),
+            distance: 10000,
+            date: this.selectedDate
+        }
       });
 
       this.bookings = result.data.bookings.edges.map(e => e.node);
