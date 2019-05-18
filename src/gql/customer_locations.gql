@@ -1,0 +1,25 @@
+{
+  customerLocations {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+      
+    }
+    edges{
+      node {
+        
+        id
+        location {
+          name
+          latitude
+          longitude
+        }
+        customer {
+          userName
+          avatarUrl
+        }
+      }
+    }
+  }
+}

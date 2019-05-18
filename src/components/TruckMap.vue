@@ -11,22 +11,21 @@
       <v-icon slot="marker">location_on</v-icon>
     </MglMarker>
     <MglMarker
-      v-for="location in userLocations"
-      :coordinates="[location.geo.lon, location.geo.lat]"
+      v-for="loc in userLocations"
+      :coordinates="[loc.location.longitude, loc.location.latitude]"
       color="red"
     >
       <v-icon
         slot="marker"
-        :color="selectedLocation ? (location.name == selectedLocation.name ? 'red' : 'blue') : 'blue'"
+        :color="selectedLocation ? (loc.id == selectedLocation.id ? 'red' : 'blue') : 'blue'"
       >home</v-icon>
     </MglMarker>
     <MglMarker
-      v-for="truck in trucks"
-      :coordinates="truck.slot.wgsLocation"
-      color="green"
-      @click="$emit('truckSelected', truck)"
+      v-for="booking in bookings"
+      :coordinates="[booking.slot.location.longitude, booking.slot.location.latitude]"
+      @click="$emit('truckSelected', booking.foodTruck)"
     >
-      <v-icon slot="marker">commute</v-icon>
+      <v-icon slot="marker" color="green">commute</v-icon>
     </MglMarker>
 
     <v-btn fab dark small color="pink" @click.stop="getGeoposition">
@@ -49,7 +48,7 @@ export default {
   props: {
     userLocations: Array,
     selectedLocation: Object,
-    trucks: Array
+    bookings: Array
   },
   data() {
     return {
@@ -79,9 +78,7 @@ export default {
   },
   watch: {
     selectedLocation: function(newVal, oldVal) {
-      // watch it
-      //console.log("Prop changed: ", newVal, " | was: ", oldVal);
-      this.center = [newVal.geo.lon, newVal.geo.lat];
+      this.center = [newVal.location.longitude, newVal.location.latitude];
     }
   }
 };

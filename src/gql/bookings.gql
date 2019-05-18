@@ -1,0 +1,20 @@
+{
+  bookings {
+    edges {
+      node {
+        date
+        slot {
+          location {
+            latitude
+            longitude
+          }
+          name
+        }
+        foodTruck {
+          name
+          description
+        }
+      }
+    }
+  }
+}

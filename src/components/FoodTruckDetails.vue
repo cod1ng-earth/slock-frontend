@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-img :src="truck.image" aspect-ratio="1.75"></v-img>
+    <v-img v-if="truck.image" :src="truck.image" aspect-ratio="1.75"></v-img>
 
     <v-card-title primary-title>
       <div>
