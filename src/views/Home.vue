@@ -8,7 +8,7 @@
         <v-select
           :items="userLocations"
           @change="locationSelected"
-          item-text="name"
+          item-text="location.name"
           return-object
           box
           label="Location"
@@ -20,7 +20,7 @@
     </v-layout>
 
     <TruckMap
-      :trucks="trucks"
+      :bookings="bookings"
       :userLocations="userLocations"
       :selectedLocation="selectedLocation"
       v-on:truckSelected="showTruckDetails"
@@ -33,6 +33,9 @@
 import FoodTruckDetails from "@/components/FoodTruckDetails.vue";
 import TruckMap from "@/components/TruckMap.vue";
 
+import QUERY_BOOKINGS from "../gql/bookings.gql";
+import QUERY_LOCATIONS from "../gql/customer_locations.gql";
+
 export default {
   components: {
     FoodTruckDetails,
@@ -43,42 +46,41 @@ export default {
     chosenTruck: null,
     selectedLocation: null,
     dates: ["heute", "morgen", "übermorgen"],
-    userLocations: [],
-    trucks: []
+    customerLocations: null,
+    bookings: []
   }),
-  async created() {
-    const response = await this.axios.get(
-      "https://www.mocky.io/v2/5cdfc651330000ff11608b21"
-    );
-    this.user = response.data;
-    this.userLocations = response.data.locations;
+  computed: {
+    userLocations() {
+      if (!this.customerLocations) return [];
+      const locations = this.customerLocations.edges.map(e => ({
+        id: e.node.id,
+        location: e.node.location
+      }));
+      return locations;
+    }
+  },
+
+  apollo: {
+    customerLocations: QUERY_LOCATIONS
   },
   methods: {
     showTruckDetails(truck) {
-      console.log(truck);
       this.sheet = true;
-      this.chosenTruck = truck.truck;
+      this.chosenTruck = truck;
     },
     locationSelected(location) {
       this.selectedLocation = location;
-      this.searchTrucks(location);
+      this.searchTrucks(location.location);
     },
     dateChanged(date) {
       console.log(date);
     },
     async searchTrucks(location) {
-      const response = await this.axios.get(
-        "https://www.mocky.io/v2/5cdfc184330000ff11608b1e"
-      );
-
-      const trucks = response.data.trucks.map(truck => {
-        truck.slot.wgsLocation = [
-          truck.slot.location.lon,
-          truck.slot.location.lat
-        ];
-        return truck;
+      const result = await this.$apollo.query({
+        query: QUERY_BOOKINGS
       });
-      this.trucks = trucks;
+
+      this.bookings = result.data.bookings.edges.map(e => e.node);
     }
   }
 };
