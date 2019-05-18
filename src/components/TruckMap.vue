@@ -39,10 +39,6 @@
 import Mapbox from "mapbox-gl";
 import { MglMap, MglMarker, MglPopup, MglNavigationControl } from "vue-mapbox";
 
-const MAP_STYLE = "mapbox://styles/mapbox/light-v9";
-const MAPBOX_TOKEN =
-  "pk.eyJ1Ijoic3RhZG9sZiIsImEiOiJjanZza3JhOTUwaDBmM3ltazltaWtwemhzIn0.AJqLRwBrJNWDrbB7Uw9I1w";
-
 export default {
   components: {
     MglMap,
@@ -59,8 +55,8 @@ export default {
     return {
       geoposition: null,
       center: [13, 52],
-      mapStyle: MAP_STYLE,
-      accessToken: MAPBOX_TOKEN
+      mapStyle: process.env.VUE_APP_MAPBOX_MAP_STYLE,
+      accessToken: process.env.VUE_APP_MAPBOX_TOKEN
     };
   },
   async created() {
