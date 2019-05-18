@@ -1,0 +1,17 @@
+version: '3.4'
+services:
+  app:
+    image: node:8.16.0
+#    user: "node"
+    working_dir: /home/node/app
+    environment:
+      APP_ENV: "dev"
+    volumes:
+      - ./:/home/node/app
+#    command: bash -c "yarn install && yarn run build"
+    entrypoint:
+        - sleep
+    command:
+        - infinity
+    ports:
+      - 8282:8080

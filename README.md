@@ -1,6 +1,16 @@
 # slock-frontend
 
-## Project setup
+## Project setup with Docker
+```
+make setup
+```
+
+Docker container will be built, packages get installed with `yarn install` 
+and app will be started with `yarn run server` in development mode.
+
+The app is accessible in the browser under http://localhost:8282
+
+## Project setup without Docker
 ```
 yarn install
 ```
