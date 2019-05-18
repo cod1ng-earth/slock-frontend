@@ -1,0 +1,22 @@
+query($userName:String!)
+{
+  customers(userName: $userName) {
+    edges {
+      node {
+        userName
+        avatarUrl
+        customerLocations {
+          edges {
+            node {
+              location {
+                name 
+                latitude
+                longitude
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
