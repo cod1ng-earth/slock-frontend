@@ -1,5 +1,5 @@
-{
-  bookings {
+query bookings($latitude: Float!, $longitude: Float!, $distance: Int!, $date: String) {
+  bookings(geo: {latitude: $latitude, longitude: $longitude, distance: $distance}, date: $date) {
     edges {
       node {
         date
