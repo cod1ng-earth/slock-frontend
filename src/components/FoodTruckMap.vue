@@ -1,11 +1,21 @@
 <template>
   <div>
+    <v-bottom-sheet v-model="sheet" v-if="chosenTruck">
+      <FoodTruckDetails :truck="chosenTruck"/>
+    </v-bottom-sheet>
     <v-layout>
       <v-flex xs6 d-flex>
-        <v-select :items="locations" box label="Location"></v-select>
+        <v-select
+          :items="userLocations"
+          @change="locationChanged"
+          item-text="name"
+          item-value="geo"
+          box
+          label="Location"
+        ></v-select>
       </v-flex>
       <v-flex xs6 d-flex>
-        <v-select :items="dates" box label="Date"></v-select>
+        <v-select :items="dates" @change="dateChanged" box label="Date"></v-select>
       </v-flex>
     </v-layout>
 
@@ -16,40 +26,109 @@
       :mapStyle.sync="mapStyle"
       style="height:50vh;"
     >
-      <MglMarker :coordinates="coordinates" color="blue" @click="gotoFoodTruck"></MglMarker>
-    </MglMap>
+      <MglNavigationControl position="top-right"/>
+      <MglMarker v-if="geoposition" :coordinates="geoposition" color="blue">
+        <v-icon slot="marker">location_on</v-icon>
+      </MglMarker>
+      <MglMarker v-if="selectedLocation" :coordinates="selectedLocation" color="red">
+        <v-icon slot="marker">home</v-icon>
+      </MglMarker>
+      <MglMarker
+        v-for="truck in trucks"
+        :coordinates="truck.slot.wgsLocation"
+        color="green"
+        @click="gotoFoodTruck(truck)"
+      >
+        <v-icon slot="marker">commute</v-icon>
+      </MglMarker>
 
-    <v-container>
-      <v-layout wrap>content</v-layout>
-    </v-container>
+      <v-btn fab dark small color="pink" @click.stop="getGeoposition">
+        <v-icon dark>explore</v-icon>
+      </v-btn>
+    </MglMap>
   </div>
 </template>
 
 <script>
 import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker, MglPopup } from "vue-mapbox";
+import { MglMap, MglMarker, MglPopup, MglNavigationControl } from "vue-mapbox";
+import FoodTruckDetails from "@/components/FoodTruckDetails.vue";
+
+const MAP_STYLE = "mapbox://styles/mapbox/light-v9";
+const MAPBOX_TOKEN =
+  "pk.eyJ1Ijoic3RhZG9sZiIsImEiOiJjanZza3JhOTUwaDBmM3ltazltaWtwemhzIn0.AJqLRwBrJNWDrbB7Uw9I1w";
 
 export default {
   components: {
     MglMap,
     MglMarker,
-    MglPopup
+    MglPopup,
+    MglNavigationControl,
+    FoodTruckDetails
   },
   data: () => ({
-    locations: ["Büro 1", "Karlsruhe"],
+    sheet: false,
+    chosenTruck: null,
+    userLocations: [],
+    selectedLocation: null,
+    trucks: [],
     dates: ["heute", "morgen", "übermorgen"],
+    geoposition: null,
     center: [13, 52],
-    coordinates: [13, 52],
-    mapStyle: "mapbox://styles/mapbox/light-v9",
-    accessToken:
-      "pk.eyJ1Ijoic3RhZG9sZiIsImEiOiJjanZza3JhOTUwaDBmM3ltazltaWtwemhzIn0.AJqLRwBrJNWDrbB7Uw9I1w"
+    mapStyle: MAP_STYLE,
+    accessToken: MAPBOX_TOKEN
   }),
-  created() {
+  async created() {
     this.mapbox = Mapbox; // We need to set mapbox-gl library here in order to use it in template
+    const response = await this.axios.get(
+      "http://www.mocky.io/v2/5cdfc651330000ff11608b21"
+    );
+    this.user = response.data;
+    this.userLocations = response.data.locations;
   },
   methods: {
-    gotoFoodTruck() {
-      this.$router.push({ name: "truck", params: { id: "stefan" } });
+    gotoFoodTruck(truck) {
+      console.log(truck);
+      this.sheet = true;
+      this.chosenTruck = truck.truck;
+
+      //this.$router.push({ name: "truck", params: { id: "stefan" } });
+    },
+    locationChanged(location) {
+      const schummel = [location.lon, location.lat];
+      this.selectedLocation = schummel;
+      this.center = schummel;
+      this.searchTrucks(location);
+    },
+    dateChanged(date) {
+      console.log(date);
+    },
+    async searchTrucks(location) {
+      const response = await this.axios.get(
+        "http://www.mocky.io/v2/5cdfc184330000ff11608b1e"
+      );
+
+      const trucks = response.data.trucks.map(truck => {
+        truck.slot.wgsLocation = [
+          truck.slot.location.lon,
+          truck.slot.location.lat
+        ];
+        return truck;
+      });
+      this.trucks = trucks;
+    },
+    getGeoposition() {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.geoposition = [
+          position.coords.longitude,
+          position.coords.latitude
+        ];
+        this.center = this.geoposition;
+        this.searchTrucks({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        });
+      });
     }
   }
 };
