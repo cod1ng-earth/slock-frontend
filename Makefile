@@ -45,7 +45,7 @@ logs: ##@development show server logs (default: 0, use parameter 'tail=<#|all>, 
 .PHONY: logs
 
 cli: ##@development get shell in a container (defaults: cli (container), /bin/sh (shell), add 'container={container}' to use different container, e.g. 'make cli container=postgres', add 'shell={shell}' to use different shell, e.g. 'make cli shell=/bin/bash')
-	$(DOCKER_COMPOSE) exec $(CONTAINER) app
+	$(DOCKER_COMPOSE) exec app bash
 .PHONY: cli
 
 stop: ##@development stop containers
