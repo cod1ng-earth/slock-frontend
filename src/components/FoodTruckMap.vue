@@ -81,7 +81,7 @@ export default {
   async created() {
     this.mapbox = Mapbox; // We need to set mapbox-gl library here in order to use it in template
     const response = await this.axios.get(
-      "http://www.mocky.io/v2/5cdfc651330000ff11608b21"
+      "https://www.mocky.io/v2/5cdfc651330000ff11608b21"
     );
     this.user = response.data;
     this.userLocations = response.data.locations;
@@ -105,7 +105,7 @@ export default {
     },
     async searchTrucks(location) {
       const response = await this.axios.get(
-        "http://www.mocky.io/v2/5cdfc184330000ff11608b1e"
+        "https://www.mocky.io/v2/5cdfc184330000ff11608b1e"
       );
 
       const trucks = response.data.trucks.map(truck => {
