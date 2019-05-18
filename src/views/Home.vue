@@ -34,7 +34,6 @@ import FoodTruckDetails from "@/components/FoodTruckDetails.vue";
 import TruckMap from "@/components/TruckMap.vue";
 
 import QUERY_BOOKINGS from "../gql/bookings.gql";
-import QUERY_LOCATIONS from "../gql/customer_locations.gql";
 
 export default {
   components: {
@@ -51,18 +50,18 @@ export default {
   }),
   computed: {
     userLocations() {
-      if (!this.customerLocations) return [];
-      const locations = this.customerLocations.edges.map(e => ({
-        id: e.node.id,
-        location: e.node.location
-      }));
+      if (!this.$store.state.user.userName) return [];
+
+      const locations = this.$store.state.user.customerLocations.edges.map(
+        e => ({
+          id: e.node.id,
+          location: e.node.location
+        })
+      );
       return locations;
     }
   },
 
-  apollo: {
-    customerLocations: QUERY_LOCATIONS
-  },
   methods: {
     showTruckDetails(truck) {
       this.sheet = true;
@@ -76,6 +75,7 @@ export default {
       console.log(date);
     },
     async searchTrucks(location) {
+      console.log(location);
       const result = await this.$apollo.query({
         query: QUERY_BOOKINGS
       });
