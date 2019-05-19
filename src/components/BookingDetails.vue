@@ -30,7 +30,7 @@
             </v-avatar>
           </v-list-tile-sub-title>
         </v-list-tile-content>
-        <v-list-tile-action>
+        <v-list-tile-action v-if="currentUser.id != train.operator.id">
           <v-btn flat color="orange" @click="joinLunchTrain(train)">Join</v-btn>
         </v-list-tile-action>
       </v-list-tile>
@@ -83,6 +83,9 @@ export default {
     },
     truck() {
       return this.booking.foodTruck;
+    },
+    currentUser() {
+      return this.$store.state.user;
     }
   },
   apollo: {
