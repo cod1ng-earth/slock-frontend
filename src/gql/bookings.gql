@@ -5,7 +5,9 @@ query bookings($latitude: Float!, $longitude: Float!, $distance: Int!, $date: St
         id
         date
         slot {
+          id
           location {
+            id
             latitude
             longitude
           }
