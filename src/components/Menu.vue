@@ -9,7 +9,7 @@
     <v-list class="pa-1">
       <v-list-tile avatar v-if="user">
         <v-list-tile-avatar>
-          <img :src="user.avatarUrl">
+          <img :src="user.avatarUrl" />
         </v-list-tile-avatar>
 
         <v-list-tile-content>
@@ -20,6 +20,19 @@
         <form @submit.prevent="login">
           <v-text-field v-model="userName" label="Login, please"></v-text-field>
         </form>
+      </v-list-tile>
+    </v-list>
+
+    <v-list class="pt-0">
+      <v-divider></v-divider>
+
+      <v-list-tile @click.prevent="toggleLocations">
+        <v-list-tile-action>
+          <v-icon>home</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>{{ labelToggleLocations }}</v-list-tile-title>
+        </v-list-tile-content>
       </v-list-tile>
     </v-list>
 
@@ -56,6 +69,12 @@ export default {
   computed: {
     user() {
       return this.$store.state.user.userName ? this.$store.state.user : false;
+    },
+    labelToggleLocations() {
+      this.$emit('input');
+      return this.$store.state.showLocations
+        ? "Hide other locations"
+        : "Show other locations";
     }
   },
   created() {
@@ -66,6 +85,9 @@ export default {
     }
   },
   methods: {
+    toggleLocations() {
+      this.$store.commit("toggleLocations");
+    },
     logout() {
       this.userName = "";
       localStorage.removeItem("userName");

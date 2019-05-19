@@ -28,6 +28,7 @@
 
     <TruckMap
       :bookings="bookings"
+      :allLocations="allLocations"
       :userLocations="userLocations"
       :selectedLocation="selectedLocation"
       v-on:bookingSelected="showBookingDetails"
@@ -41,6 +42,7 @@ import BookingDetails from "@/components/BookingDetails.vue";
 import TruckMap from "@/components/TruckMap.vue";
 
 import QUERY_BOOKINGS from "../gql/bookings.gql";
+import QUERY_LOCATIONS from "../gql/locations.gql";
 
 export default {
   components: {
@@ -52,6 +54,7 @@ export default {
     chosenBooking: null,
     selectedLocation: null,
     selectedDate: null,
+    locations: null,
     customerLocations: null,
     bookings: [],
     dates: [
@@ -69,17 +72,40 @@ export default {
       }
     ]
   }),
+
+  apollo: {
+    locations: {
+      query: QUERY_LOCATIONS
+    }
+  },
+
   computed: {
+    allLocations() {
+      if (!this.locations) {
+        return [];
+      }
+
+      const locations = this.locations.edges.map(
+        e => ({
+          id: e.node.id,
+          latitude: e.node.latitude,
+          longitude: e.node.longitude,
+          name: e.node.name
+        })
+      );
+
+      return locations;
+    },
+
     userLocations() {
       if (!this.$store.state.user.userName) return [];
 
-      const locations = this.$store.state.user.customerLocations.edges.map(
+      const customerLocations = this.$store.state.user.customerLocations.edges.map(
         e => ({
-          id: e.node.id,
           location: e.node.location
         })
       );
-      return locations;
+      return customerLocations;
     }
   },
 

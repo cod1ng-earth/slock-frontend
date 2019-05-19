@@ -11,6 +11,7 @@ query($userName:String!)
           edges {
             node {
               location {
+                id
                 name 
                 latitude
                 longitude

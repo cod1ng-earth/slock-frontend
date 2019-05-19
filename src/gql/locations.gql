@@ -1,0 +1,17 @@
+{
+  locations {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    edges{
+      node {
+        id
+        name
+        latitude
+        longitude
+      }
+    }
+  }
+}

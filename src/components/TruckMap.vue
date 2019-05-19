@@ -11,7 +11,20 @@
       <v-icon slot="marker">location_on</v-icon>
     </MglMarker>
     <MglMarker
+      v-if="showOtherLocations"
+      v-for="loc in this.otherLocations"
+      :key="loc.id"
+      :coordinates="[loc.longitude, loc.latitude]"
+      color="grey"
+    >
+      <v-icon
+        slot="marker"
+        color="grey"
+      >home</v-icon>
+    </MglMarker>
+    <MglMarker
       v-for="loc in userLocations"
+      :key="loc.id"
       :coordinates="[loc.location.longitude, loc.location.latitude]"
       color="red"
     >
@@ -22,6 +35,7 @@
     </MglMarker>
     <MglMarker
       v-for="booking in bookings"
+      :key="booking.id"
       :coordinates="[booking.slot.location.longitude, booking.slot.location.latitude]"
       @click="$emit('bookingSelected', booking)"
     >
@@ -46,6 +60,7 @@ export default {
     MglNavigationControl
   },
   props: {
+    allLocations: Array,
     userLocations: Array,
     selectedLocation: Object,
     bookings: Array
@@ -60,6 +75,20 @@ export default {
   },
   async created() {
     this.mapbox = Mapbox; // We need to set mapbox-gl library here in order to use it in template
+  },
+  computed: {
+    otherLocations() {
+      if (!this.allLocations || !this.userLocations) {
+        return [];
+      }
+
+      return this.allLocations.filter(
+        loc1 => !this.userLocations.some(loc2 => (loc2.location.id === loc1.id))
+      );
+    },
+    showOtherLocations() {
+      return this.allLocations && this.$store.state.showLocations;
+    }
   },
   methods: {
     getGeoposition() {

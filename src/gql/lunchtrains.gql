@@ -2,8 +2,8 @@ query lunchTrains($booking: String!, $after:String, $before: String)
 {
   lunchTrains(booking:$booking, leavesAt: {after:$after, before:$before}) {
     edges {
-       node {
-           id
+      node {
+        id
         leavesAt
         booking {
           id
@@ -15,15 +15,16 @@ query lunchTrains($booking: String!, $after:String, $before: String)
           totalCount
           edges {
             node {
+              id
               userName
               avatarUrl
             }
           }
         }
         operator {
+          id
           userName
           avatarUrl
-          id
         }
       }
     }
