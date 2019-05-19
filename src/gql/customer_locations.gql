@@ -1,5 +1,5 @@
-{
-  customerLocations {
+query ($customerId: Int!){
+  customerLocations(customer: $customerId) {
     totalCount
     pageInfo {
       endCursor
