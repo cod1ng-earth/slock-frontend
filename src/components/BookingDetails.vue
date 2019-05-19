@@ -5,23 +5,27 @@
 
     <v-card-title primary-title>
       <div>
-        <h3 class="headline mb-0">{{truck.name}}</h3>
+        <h3 class="headline mb-0">{{ truck.name }}</h3>
         <div>{{ truck.description }}</div>
       </div>
     </v-card-title>
 
     <v-list three-line>
       <v-subheader>Lunch Trains on {{ booking.date }}</v-subheader>
-      <v-list-tile v-for="train in lunchTrainNodes">
+      <v-list-tile v-for="train in lunchTrainNodes"
+                   :key="train.id">
         <v-list-tile-avatar>
-          <img :src="train.operator.avatarUrl">
+          <img :src="train.operator.avatarUrl" />
         </v-list-tile-avatar>
         <v-list-tile-content>
           <v-list-tile-title v-html="train.operator.userName"></v-list-tile-title>
           <v-list-tile-sub-title v-html="train.leavesAt"></v-list-tile-sub-title>
           <v-list-tile-sub-title>
-            <v-avatar v-for="edge in train.riders.edges" :tile="false" :size="20">
-              <img :src="edge.node.avatarUrl" :alt="edge.node.userName">
+            <v-avatar v-for="edge in train.riders.edges"
+                      :key="edge.node.id"
+                      :tile="false"
+                      :size="20">
+              <img :src="edge.node.avatarUrl" :alt="edge.node.userName" />
             </v-avatar>
           </v-list-tile-sub-title>
         </v-list-tile-content>
