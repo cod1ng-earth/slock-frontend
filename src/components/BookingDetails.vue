@@ -12,24 +12,25 @@
 
     <v-list three-line>
       <v-subheader>Lunch Trains on {{ booking.date }}</v-subheader>
-      <v-list-tile v-for="train in lunchTrainNodes"
-                   :key="train.id">
+      <v-list-tile v-for="train in lunchTrainNodes" :key="train.id">
         <v-list-tile-avatar>
-          <img :src="train.operator.avatarUrl" />
+          <img :src="train.operator.avatarUrl">
         </v-list-tile-avatar>
         <v-list-tile-content>
           <v-list-tile-title v-html="train.operator.userName"></v-list-tile-title>
           <v-list-tile-sub-title v-html="train.leavesAt"></v-list-tile-sub-title>
           <v-list-tile-sub-title>
-            <v-avatar v-for="edge in train.riders.edges"
-                      :key="edge.node.id"
-                      :tile="false"
-                      :size="20">
-              <img :src="edge.node.avatarUrl" :alt="edge.node.userName" />
+            <v-avatar
+              v-for="edge in train.riders.edges"
+              :key="edge.node.id"
+              :tile="false"
+              :size="20"
+            >
+              <img :src="edge.node.avatarUrl" :alt="edge.node.userName">
             </v-avatar>
           </v-list-tile-sub-title>
         </v-list-tile-content>
-        <v-list-tile-action>
+        <v-list-tile-action v-if="currentUser.id != train.operator.id">
           <v-btn flat color="orange" @click="joinLunchTrain(train)">Join</v-btn>
         </v-list-tile-action>
       </v-list-tile>
@@ -60,7 +61,21 @@ export default {
       await this.axios.post(url, {});
       this.$apollo.queries.lunchTrains.refetch();
     },
-    createLunchTrain() {}
+    async createLunchTrain() {
+      const d = new Date(this.booking.date);
+      d.setHours(12);
+      d.setMinutes(0);
+      d.setSeconds(0);
+
+      const lunchTrain = {
+        operator: this.$store.state.user.id,
+        booking: this.booking.id,
+        leavesAt: d.toISOString()
+      };
+      const url = process.env.VUE_APP_API_ENDPOINT + "/lunch_trains";
+      await this.axios.post(url, lunchTrain); //console.log(lunchTrain);
+      this.$apollo.queries.lunchTrains.refetch();
+    }
   },
   computed: {
     lunchTrainNodes() {
@@ -68,6 +83,9 @@ export default {
     },
     truck() {
       return this.booking.foodTruck;
+    },
+    currentUser() {
+      return this.$store.state.user;
     }
   },
   apollo: {
