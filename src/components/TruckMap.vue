@@ -23,7 +23,7 @@
     <MglMarker
       v-for="booking in bookings"
       :coordinates="[booking.slot.location.longitude, booking.slot.location.latitude]"
-      @click="$emit('truckSelected', booking.foodTruck)"
+      @click="$emit('bookingSelected', booking)"
     >
       <v-icon slot="marker" color="green">commute</v-icon>
     </MglMarker>
