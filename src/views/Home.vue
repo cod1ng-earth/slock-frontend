@@ -73,6 +73,23 @@ export default {
     ]
   }),
 
+  created() {
+    this.dates = [
+      {
+        label: "heute",
+        date: this.getDateWithOffset()
+      },
+      {
+        label: "morgen",
+        date: this.getDateWithOffset(1)
+      },
+      {
+        label: "übermorgen",
+        date: this.getDateWithOffset(2)
+      }
+    ];
+  },
+
   apollo: {
     locations: {
       query: QUERY_LOCATIONS
@@ -136,6 +153,12 @@ export default {
       });
 
       this.bookings = result.data.bookings.edges.map(e => e.node);
+    },
+    getDateWithOffset(offset) {
+      offset = offset || 0;
+      let date = new Date();
+      date.setDate(date.getDate() + offset);
+      return date.toISOString().split('T').shift();
     }
   }
 };
