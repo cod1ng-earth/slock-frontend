@@ -32,19 +32,21 @@
       :userLocations="userLocations"
       :selectedLocation="selectedLocation"
       v-on:bookingSelected="showBookingDetails"
+      v-on:otherLocationSelected="selectLocation"
       v-on:locationChanged="searchTrucks"
     />
   </div>
 </template>
 
 <script>
-import BookingDetails from "@/components/BookingDetails.vue";
-import TruckMap from "@/components/TruckMap.vue";
+  import BookingDetails from "@/components/BookingDetails.vue";
+  import TruckMap from "@/components/TruckMap.vue";
 
-import QUERY_BOOKINGS from "../gql/bookings.gql";
-import QUERY_LOCATIONS from "../gql/locations.gql";
+  import QUERY_BOOKINGS from "../gql/bookings.gql";
+  import QUERY_LOCATIONS from "../gql/locations.gql";
+  import QUERY_CUSTOMER_LOCATIONS from "../gql/customer_locations.gql";
 
-export default {
+  export default {
   components: {
     BookingDetails,
     TruckMap
@@ -136,6 +138,32 @@ export default {
     dateChanged(date) {
       this.selectedDate = date;
       this.searchTrucks();
+    },
+    selectLocation(location) {
+      this.addCustomerLocation(location);
+    },
+    async addCustomerLocation(location) {
+      const url =
+        process.env.VUE_APP_API_ENDPOINT + "/customer_locations";
+      let postData = {
+        location: location.id,
+        customer: this.$store.state.user.id
+      };
+
+      await this.axios.post(url, postData);
+
+      this.getCustomerLocations();
+    },
+    async getCustomerLocations() {
+      const result = await this.$apollo.query({
+        query: QUERY_CUSTOMER_LOCATIONS,
+        variables: {
+          customerId: this.$store.state.user._id
+        },
+        fetchPolicy: 'network-only'
+      });
+
+      this.$store.commit("setCustomerLocations", result.data.customerLocations);
     },
     async searchTrucks() {
       if (!this.selectedLocation || !this.selectedDate) {

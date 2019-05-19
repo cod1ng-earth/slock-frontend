@@ -13,12 +13,15 @@
     </MglMarker>
     <MglMarker
       v-if="showOtherLocations"
-      v-for="loc in this.otherLocations"
-      :key="loc.id"
-      :coordinates="[loc.longitude, loc.latitude]"
-      color="grey"
+      v-for="location in otherLocations"
+      :key="location.id"
+      :coordinates="[location.longitude, location.latitude]"
+      @click="$emit('otherLocationSelected', location)"
     >
-      <v-icon slot="marker" color="grey">home</v-icon>
+      <div
+        :style="{ width: 30 + 'px', height: 30 + 'px', backgroundSize: 50+'px', backgroundImage: `url(${img.imgBuilding})`}"
+        slot="marker"
+      ></div>
     </MglMarker>
     <MglMarker
       v-for="loc in userLocations"
@@ -34,6 +37,7 @@
     <MglMarker
       v-for="booking in bookings"
       :key="booking.id"
+      :offset="[40,10]"
       :coordinates="[booking.slot.location.longitude, booking.slot.location.latitude]"
       @click="$emit('bookingSelected', booking)"
     >
@@ -88,7 +92,11 @@ export default {
       }
 
       return this.allLocations.filter(
-        loc1 => !this.userLocations.some(loc2 => loc2.location.id === loc1.id)
+        loc1 => !this.userLocations.some(loc2 => (
+          loc2.location.id === loc1.id ||
+          (loc2.location.latitude === loc1.latitude &&
+           loc2.location.longitude === loc1.longitude)
+        ))
       );
     },
     showOtherLocations() {
