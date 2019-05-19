@@ -28,10 +28,10 @@
       :coordinates="[loc.location.longitude, loc.location.latitude]"
       color="red"
     >
-      <v-icon
+      <div
+        :style="{ width: 50 + 'px', height: 50 + 'px', backgroundSize: 50+'px', backgroundImage: `url(${img.imgBuilding})`}"
         slot="marker"
-        :color="selectedLocation ? (loc.id == selectedLocation.id ? 'red' : 'blue') : 'blue'"
-      >home</v-icon>
+      ></div>
     </MglMarker>
     <MglMarker
       v-for="booking in bookings"
@@ -39,7 +39,10 @@
       :coordinates="[booking.slot.location.longitude, booking.slot.location.latitude]"
       @click="$emit('bookingSelected', booking)"
     >
-      <v-icon slot="marker" color="green">commute</v-icon>
+      <div
+        :style="{ width: 40 + 'px', height: 40 + 'px', backgroundSize: 40+'px', backgroundImage: `url(${img.imgTruck})`}"
+        slot="marker"
+      ></div>
     </MglMarker>
 
     <v-btn fab dark small color="pink" @click.stop="getGeoposition">
@@ -52,6 +55,8 @@
 import Mapbox from "mapbox-gl";
 import { MglMap, MglMarker, MglPopup, MglNavigationControl } from "vue-mapbox";
 
+import imgTruck from "../assets/foodtruck.png";
+import imgBuilding from "../assets/building.png";
 export default {
   components: {
     MglMap,
@@ -67,6 +72,7 @@ export default {
   },
   data() {
     return {
+      img: { imgTruck, imgBuilding },
       geoposition: null,
       center: [13, 52],
       mapStyle: process.env.VUE_APP_MAPBOX_MAP_STYLE,
