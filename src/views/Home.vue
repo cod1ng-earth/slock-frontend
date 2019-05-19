@@ -85,14 +85,12 @@ export default {
         return [];
       }
 
-      const locations = this.locations.edges.map(
-        e => ({
-          id: e.node.id,
-          latitude: e.node.latitude,
-          longitude: e.node.longitude,
-          name: e.node.name
-        })
-      );
+      const locations = this.locations.edges.map(e => ({
+        id: e.node.id,
+        latitude: e.node.latitude,
+        longitude: e.node.longitude,
+        name: e.node.name
+      }));
 
       return locations;
     },
