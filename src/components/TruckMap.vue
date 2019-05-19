@@ -4,7 +4,8 @@
     :zoom="12"
     :center="center"
     :mapStyle.sync="mapStyle"
-    style="height:50vh;"
+    style="height:80vh;"
+    @load="mapLoaded"
   >
     <MglNavigationControl position="top-right"/>
     <MglMarker v-if="geoposition" :coordinates="geoposition" color="blue">
@@ -17,10 +18,7 @@
       :coordinates="[loc.longitude, loc.latitude]"
       color="grey"
     >
-      <v-icon
-        slot="marker"
-        color="grey"
-      >home</v-icon>
+      <v-icon slot="marker" color="grey">home</v-icon>
     </MglMarker>
     <MglMarker
       v-for="loc in userLocations"
@@ -53,7 +51,7 @@
 
 <script>
 import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker, MglPopup, MglNavigationControl } from "vue-mapbox";
+import { MglMap, MglMarker, MglNavigationControl } from "vue-mapbox";
 
 import imgTruck from "../assets/foodtruck.png";
 import imgBuilding from "../assets/building.png";
@@ -61,7 +59,7 @@ export default {
   components: {
     MglMap,
     MglMarker,
-    MglPopup,
+
     MglNavigationControl
   },
   props: {
@@ -82,6 +80,7 @@ export default {
   async created() {
     this.mapbox = Mapbox; // We need to set mapbox-gl library here in order to use it in template
   },
+
   computed: {
     otherLocations() {
       if (!this.allLocations || !this.userLocations) {
@@ -89,7 +88,7 @@ export default {
       }
 
       return this.allLocations.filter(
-        loc1 => !this.userLocations.some(loc2 => (loc2.location.id === loc1.id))
+        loc1 => !this.userLocations.some(loc2 => loc2.location.id === loc1.id)
       );
     },
     showOtherLocations() {
@@ -97,6 +96,9 @@ export default {
     }
   },
   methods: {
+    async mapLoaded(event) {
+      this.asyncActions = event.component.actions;
+    },
     getGeoposition() {
       navigator.geolocation.getCurrentPosition(position => {
         this.geoposition = [
@@ -113,7 +115,12 @@ export default {
   },
   watch: {
     selectedLocation: function(newVal, oldVal) {
-      this.center = [newVal.location.longitude, newVal.location.latitude];
+      this.asyncActions.flyTo({
+        center: [newVal.location.longitude, newVal.location.latitude],
+        //zoom: 9,
+        speed: 1
+      });
+      console.log(oldVal);
     }
   }
 };
