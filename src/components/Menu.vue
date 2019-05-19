@@ -67,7 +67,6 @@ export default {
   },
   methods: {
     logout() {
-      console.log("logout");
       this.userName = "";
       localStorage.removeItem("userName");
       this.$store.commit("setUser", {});

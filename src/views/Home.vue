@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-bottom-sheet v-model="sheet" v-if="chosenTruck">
-      <FoodTruckDetails :truck="chosenTruck"/>
+    <v-bottom-sheet v-model="sheet" v-if="chosenBooking">
+      <BookingDetails :booking="chosenBooking" :date="selectedDate"/>
     </v-bottom-sheet>
     <v-layout>
       <v-flex xs6 d-flex>
@@ -15,12 +15,13 @@
         ></v-select>
       </v-flex>
       <v-flex xs6 d-flex>
-        <v-select :items="dates"
-                  @change="dateChanged"
-                  item-text="label"
-                  item-value="date"
-                  box
-                  label="Date"
+        <v-select
+          :items="dates"
+          @change="dateChanged"
+          item-text="label"
+          item-value="date"
+          box
+          label="Date"
         ></v-select>
       </v-flex>
     </v-layout>
@@ -29,45 +30,44 @@
       :bookings="bookings"
       :userLocations="userLocations"
       :selectedLocation="selectedLocation"
-      v-on:truckSelected="showTruckDetails"
+      v-on:bookingSelected="showBookingDetails"
       v-on:locationChanged="searchTrucks"
     />
   </div>
 </template>
 
 <script>
-import FoodTruckDetails from "@/components/FoodTruckDetails.vue";
+import BookingDetails from "@/components/BookingDetails.vue";
 import TruckMap from "@/components/TruckMap.vue";
 
 import QUERY_BOOKINGS from "../gql/bookings.gql";
 
 export default {
   components: {
-    FoodTruckDetails,
+    BookingDetails,
     TruckMap
   },
   data: () => ({
     sheet: false,
-    chosenTruck: null,
+    chosenBooking: null,
     selectedLocation: null,
     selectedDate: null,
+    customerLocations: null,
+    bookings: [],
     dates: [
       {
         label: "heute",
-        date: '2019-05-18'
+        date: "2019-05-18"
       },
       {
-        label:"morgen",
-        date: '2019-05-19'
-      }
-      ,
+        label: "morgen",
+        date: "2019-05-19"
+      },
       {
-        label:"übermorgen",
-        date: '2019-05-20'
+        label: "übermorgen",
+        date: "2019-05-20"
       }
-    ],
-    customerLocations: null,
-    bookings: []
+    ]
   }),
   computed: {
     userLocations() {
@@ -84,9 +84,9 @@ export default {
   },
 
   methods: {
-    showTruckDetails(truck) {
+    showBookingDetails(booking) {
       this.sheet = true;
-      this.chosenTruck = truck;
+      this.chosenBooking = booking;
     },
     locationSelected(location) {
       this.selectedLocation = location;
@@ -104,10 +104,10 @@ export default {
       const result = await this.$apollo.query({
         query: QUERY_BOOKINGS,
         variables: {
-            latitude: parseFloat(this.selectedLocation.location.latitude),
-            longitude: parseFloat(this.selectedLocation.location.longitude),
-            distance: 10000,
-            date: this.selectedDate
+          latitude: parseFloat(this.selectedLocation.location.latitude),
+          longitude: parseFloat(this.selectedLocation.location.longitude),
+          distance: 10000,
+          date: this.selectedDate
         }
       });
 

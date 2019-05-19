@@ -3,6 +3,8 @@ query($userName:String!)
   customers(userName: $userName) {
     edges {
       node {
+        _id
+        id
         userName
         avatarUrl
         customerLocations {

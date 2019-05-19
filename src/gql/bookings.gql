@@ -2,6 +2,7 @@ query bookings($latitude: Float!, $longitude: Float!, $distance: Int!, $date: St
   bookings(geo: {latitude: $latitude, longitude: $longitude, distance: $distance}, date: $date) {
     edges {
       node {
+        id
         date
         slot {
           location {
@@ -13,6 +14,7 @@ query bookings($latitude: Float!, $longitude: Float!, $distance: Int!, $date: St
         foodTruck {
           name
           description
+          imageUrl
         }
       }
     }
